@@ -1,7 +1,7 @@
 Package: ClustAssess
 Type: Package
 Title: Tools for Assessing Clustering
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Arash", "Shahsavari", email="as3006@cam.ac.uk",
                   role = c("aut", "cre")), person("Irina", "Mohorianu",
                   email="iim22@cam.ac.uk", role="aut"))
@@ -20,11 +20,11 @@ Imports: ggplot2, dplyr, fastcluster, rlang, Matrix, igraph, magrittr,
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp
 Suggests: knitr, rmarkdown, e1071, dbscan, dendextend, Seurat
-URL: https://github.com/moodymudskipper/inops
+URL: https://github.com/Core-Bioinformatics/ClustAssess
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2021-03-30 16:38:04 UTC; Arash
+Packaged: 2021-03-31 15:18:42 UTC; Arash
 Author: Arash Shahsavari [aut, cre],
   Irina Mohorianu [aut]
 Repository: CRAN
-Date/Publication: 2021-03-31 12:00:05 UTC
+Date/Publication: 2021-03-31 16:40:03 UTC

@@ -1,4 +1,4 @@
-42fe03e26056f4e2d3d58c81cb83521f *DESCRIPTION
+6a05a60363ec1767772a154e34729ffb *DESCRIPTION
 2ecf262c2a0fa80e1cd568cf5073423c *LICENSE
 7f1c05ccb818856cf98b5015a79fd0b5 *NAMESPACE
 2a8696468f8cb4458d022e17f315afc8 *R/ECS.R
@@ -6,14 +6,14 @@ f285ef17e1d7be758b81a0628802ce9e *R/PAC.R
 02b0b76d6e03ee43cf868944e83fb4bc *R/RcppExports.R
 93079193ca3cbe070187cb785c8e0afc *R/marker-overlap.R
 17d615df8734603ecc4cddabdb7b3aa1 *R/utils-pipe.R
-2f7e28e8058076e93f37f4181c5e8b1b *README.md
+7716f5010e9c86a2cf7ebb0279ca6d78 *README.md
 856ee172510bf88d45da86d1834dc41a *build/vignette.rds
 6605c4c2f76b18043e6d931f87770b06 *inst/doc/ClustAssess.R
 68787517ecf58e02d9fd3a67428e01d6 *inst/doc/ClustAssess.Rmd
-ad48d024ecc64b72478c5b1348307129 *inst/doc/ClustAssess.html
+ebdf7d6ca8e89ee5aee5f4695e937f97 *inst/doc/ClustAssess.html
 a07821f302c45823bd7a835286fe407c *inst/doc/comparing-soft-and-hierarchical.R
 c8b22f176e420b133e6a0e5fb7612224 *inst/doc/comparing-soft-and-hierarchical.Rmd
-765c94cfba36201b1e2aedf57b4ac5ea *inst/doc/comparing-soft-and-hierarchical.html
+a1a993deb2bb2989589c3f68d7bd441a *inst/doc/comparing-soft-and-hierarchical.html
 995d70e1644332a4950ea4ac412a6a8e *man/Clustering-class.Rd
 e77079a4eb46b769f2061fe07bf83405 *man/consensus_cluster.Rd
 65c32f09996ddb7d7d55ce5c72cddb4e *man/create_clustering.Rd
