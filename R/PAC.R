@@ -6,7 +6,7 @@ calculate_dist = function(x, dist_method, p=2){
   if (dist_method %in% c("euclidean", "maximum", "manhattan", "canberra",
                          "binary", "minkowski")){
     d <- stats::dist(x, method=dist_method, p=p)
-  } else if (dist_method == 'pearson'){
+  } else if (dist_method=='pearson'){
     d <- 1 - stats::cor(x, method='pearson')
   } else {
     stop('Distance measure not recognized. Please choose one of euclidean,
@@ -39,6 +39,7 @@ calculate_dist = function(x, dist_method, p=2){
 #' @param lower_lim The lower limit for determining whether a pair is
 #' clustered ambiguously; the lower this value, the higher the PAC.
 #' @param p_minkowski The power of the Minkowski distance.
+#' @param verbose Logical value used for choosing to display a progress bar or not.
 #'
 #' @return A data.frame with PAC values across iterations, as well as parameter
 #' values used when calling the method.
@@ -61,7 +62,8 @@ calculate_dist = function(x, dist_method, p=2){
 consensus_cluster <- function(x, k_min=3, k_max=100, n_reps=100, p_sample=0.8,
                               p_feature=1.0, p_minkowski=2,
                               dist_method='euclidean', linkage='complete',
-                              lower_lim=0.1, upper_lim=0.9){
+                              lower_lim=0.1, upper_lim=0.9,
+                              verbose=TRUE){
   n.samples = floor(p_sample * nrow(x))
   n.features = floor(p_feature * ncol(x))
   # threshold for k_max so we don't accidentally look for too many clusters
@@ -79,7 +81,22 @@ consensus_cluster <- function(x, k_min=3, k_max=100, n_reps=100, p_sample=0.8,
 
   pac.matrix = matrix(0, nrow=(k_max-k_min+1), ncol=n_reps)
 
+  if(verbose) {
+    message("Calculating consensus clustering")
+    pb <- progress::progress_bar$new(
+      format = "[:bar] :current/:total eta: :eta  total elapsed:  :elapsed",
+      total = n_reps,
+      clear = FALSE,
+      width = 80
+    )
+
+    pb$tick(0)
+  }
+
   for (i in 1:n_reps){
+    if(verbose)
+      pb$tick()
+
     sample.indices = sample(x=nrow(x), size=n.samples, replace=FALSE)
     indicator[sample.indices, sample.indices] =
       indicator[sample.indices, sample.indices] + 1
@@ -122,7 +139,9 @@ consensus_cluster <- function(x, k_min=3, k_max=100, n_reps=100, p_sample=0.8,
 #' @param pac_res The data.frame output by consensus_cluster.
 #' @param k_plot A vector with values of k to plot.
 #'
-#' @return A ggplot2 object with the convergence plot.
+#' @return A ggplot2 object with the convergence plot. Convergence has been
+#' reached when the lines flatten out across k_plot values.
+#' out across
 #' @export
 #'
 #' @importFrom rlang .data
@@ -132,10 +151,11 @@ consensus_cluster <- function(x, k_min=3, k_max=100, n_reps=100, p_sample=0.8,
 #' pac_convergence(pac.res, k_plot=c(3,5,7,9))
 pac_convergence = function(pac_res, k_plot){
   conv = pac_res %>% dplyr::filter(.data$n.clusters %in% k_plot)
+  conv$n.clusters = as.factor(conv$n.clusters)
 
   ggplot2::ggplot(data=conv,
-                  ggplot2::aes(x = .data$iteration, y = .data$pac,
-                               color = as.factor(.data$n.clusters),
+                  ggplot2::aes(x=.data$iteration, y=.data$pac,
+                               color=.data$n.clusters,
                                group=.data$n.clusters)) +
           ggplot2::geom_line() +
           ggplot2::labs(title='PAC convergence')
@@ -147,10 +167,11 @@ pac_convergence = function(pac_res, k_plot){
 #' of clusters.
 #'
 #' @param pac_res The data.frame output by consensus_cluster.
-#' @param n_shade The number of iterations to shade to show the
-#' variability of PAC across the last n_shade iterations.
+#' @param n_shade The PAC values across the last n_shade iterations will be
+#' shaded to illustrate the how stable the PAC score is.
 #'
-#' @return A ggplot2 object with the final PAC vs k plot.
+#' @return A ggplot2 object with the final PAC vs k plot. A local minimum in the
+#' landscape indicates an especially stable value of k.
 #' @export
 #'
 #' @importFrom rlang .data
@@ -167,7 +188,7 @@ pac_landscape = function(pac_res, n_shade = max(pac_res$iteration)/5){
   # create data frame with shaded regions
   pac.df = pac_res %>% dplyr::group_by(.data$n.clusters) %>%
     dplyr::top_n(n_shade, wt=.data$iteration) %>%
-    dplyr::mutate(pmin = min(.data$pac), pmax=max(.data$pac)) %>%
+    dplyr::mutate(pmin=min(.data$pac), pmax=max(.data$pac)) %>%
     dplyr::top_n(1, wt=.data$iteration)
 
   ggplot2::ggplot(data=pac.df,

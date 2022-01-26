@@ -21,7 +21,8 @@ cc.res = consensus_cluster(t(pbmc.data),
                            k_max=30, 
                            n_reps=100,
                            p_sample=0.8,
-                           p_feature=0.8)
+                           p_feature=0.8,
+                           verbose=TRUE)
 
 # assess the PAC convergence for a few values of k - each curve should 
 # have converged to some value
@@ -36,7 +37,6 @@ pac_landscape(cc.res)
 ## ----ecs, fig.width=7, fig.height=4.5-----------------------------------------
 # first, cluster with Louvain algorithm
 pbmc_small = FindClusters(pbmc_small, resolution=0.8, verbose=FALSE)
-louvain.clustering = create_clustering(pbmc_small@meta.data$seurat_clusters)
 DimPlot(pbmc_small, group.by='seurat_clusters')
 
 # also cluster with PCA+k-means
@@ -45,12 +45,11 @@ pbmc_small@meta.data$kmeans_clusters = kmeans(pbmc_pca,
                                               centers=3, 
                                               nstart=10, 
                                               iter.max=1e3)$cluster
-kmeans.clustering = create_clustering(pbmc_small@meta.data$kmeans_clusters)
 DimPlot(pbmc_small, group.by='kmeans_clusters')
 
 # where are the clustering results more similar?
-pbmc_small@meta.data$ecs = element_sim_elscore(louvain.clustering, 
-                                               kmeans.clustering)
+pbmc_small@meta.data$ecs = element_sim_elscore(pbmc_small@meta.data$seurat_clusters, 
+                                               pbmc_small@meta.data$kmeans_clusters)
 FeaturePlot(pbmc_small, 'ecs')
 mean(pbmc_small@meta.data$ecs)
 
@@ -91,19 +90,19 @@ for (i in 1:n.reps){
   # the algorithm converges, and that the variability in final clusterings
   # depends mainly on the random initial cluster assignments
   km.res = kmeans(pbmc_pca, centers=3, nstart=1, iter.max=1e3)$cluster
-  clustering.list[[i]] = create_clustering(km.res)
+  clustering.list[[i]] = km.res
 }
 
-# now, we calculate the element-wise frustration (ie consistency), which
+# now, we calculate the element-wise consistency (aka frustration), which
 # performs pair-wise comparisons between all 20 clusterings; the 
-# frustration is the average per-cell ECS across all comparisons. The higher
-# the frustration, the more consistently is that cell clustered across
+# consistency is the average per-cell ECS across all comparisons. The higher
+# the consistency, the more consistently is that cell clustered across
 # random seeds.
-pbmc_small@meta.data$frustration = element_frustration(clustering.list)
+pbmc_small@meta.data$consistency = element_consistency(clustering.list)
 
 # which cells are clustered more consistently?
-FeaturePlot(pbmc_small, 'frustration')
-mean(pbmc_small@meta.data$frustration)
+FeaturePlot(pbmc_small, 'consistency')
+mean(pbmc_small@meta.data$consistency)
 
 ## ----sessinf------------------------------------------------------------------
 sessionInfo()

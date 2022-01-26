@@ -1,20 +1,25 @@
-# ClustAssess: a Set of Tools for Assessing Clustering
+# ClustAssess: Tools for Assessing Clustering
 
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/ClustAssess)](https://github.com/r-hub/cranlogs.app)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/ClustAssess)](https://github.com/r-hub/cranlogs.app)
 
 This repo contains the ClustAssess R package, which provides a set of tools
-for assessing clustering robustness.
+for evaluating clustering robustness.
 
 - [The Tools](#the-tools)
   * [Proportion of Ambiguously Clustered Pairs (PAC)](#proportion-of-ambiguously-clustered-pairs-pac)
   * [Element Centric Clustering Similarity (ECS)](#element-centric-clustering-similarity-ecs)
-  * [Marker gene overlap](#marker-gene-overlap)
+  * [Marker Gene Overlap](#marker-gene-overlap)
+  * [Stability-Based Parameter Assessment](#stability-based-parameter-assessment)
+- [Handling Large Datasets](#handling-large-datasets)
 - [Installation](#installation)
 - [References](#references)
 
 
 # The Tools
+
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/reference/figures/diagram.png width=80%/>
+
 ## Proportion of Ambiguously Clustered Pairs (PAC)
 To assess clustering robustness, the proportion of ambiguously clustered pairs
 (PAC) [1] uses a consensus clustering. The rate of element co-clustering is
@@ -56,26 +61,23 @@ In addition to providing per-element information on clustering agreement, ECS
 avoids several pitfalls associated with other measures of clustering
 similarity (refer to [4] for more detail).
 
-To calculate ECS, the user first needs to create a `Clustering` object:
+To compare two clusterings with ECS, we use the `element_sim_elscore` function:
 
-`clustering_object1 = create_clustering(clustering_result1, alpha=0.9)`
+`ecs = element_sim_elscore(clustering_result1, clustering_result2, alpha=0.9)`
 
-where `1-alpha` is the restart probability of the random walk. To compare two
-clusterings, we use the `element_sim_elscore` function:
-
-`ecs = element_sim_elscore(clustering_object1, clustering_object2)`
-
-and we can subsequently visualize the ECS on a PCA of the data:
+where `1-alpha` is the restart probability of the random walk. We can
+subsequently visualize the ECS on a PCA of the data:
 
 <img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/comparing-soft-and-hierarchical_files/figure-html/ecs-2.png width=80%/>
 
 In addition to flat disjoint clusterings (like the result of k-means for
 example), ClustAssess can also compare overlapping clusterings and hierarchical
-clusterings; refer to the `create_clustering` documentation for more detail.
+clusterings; refer to the `comparing-soft-and-hierarchical` vignette for more
+detail.
 
 Besides comparing two clusterings with `element_sim_elscore`, ClustAssess
 also enables computing the per-element consistency (aka frustration) between a
-set of clusterings with the `element_frustration` function, and comparing a set
+set of clusterings with the `element_consistency` function, and comparing a set
 of clusterings with a ground truth partitioning of elements with the
 `element_agreement` function.
 
@@ -91,12 +93,51 @@ Jaccard similarity (size of intersect divided by size of union) per cell.
 <img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/ClustAssess_files/figure-html/jsi-1.png width=80%/>
 
 
+## Stability-Based Parameter Assessment
+The most common clustering pipeline for single-cell data consists of
+constructing a nearest-neighbor graph of the cells, followed by community
+detection to obtain the clustering. This pipeline is available in multiple
+single-cell toolkits, including Seurat, Monocle v3, and SCANPY.
+ClustAssess provides several methods to assess the stability of parameter
+choices that influence the final clustering, for example to evaluate feature
+sets, we use `get_feature_stability_object`, and plot the results with
+`plot_feature_stability_boxplot`:
+
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/stability-based-parameter-assessment_files/figure-html/stab_boxplot-1.png width=80%/>
+
+where the higher element-centric consistency (ECC) indicates more stable
+clustering results across random seeds. For more details, please see [this 
+vignette](https://core-bioinformatics.github.io/ClustAssess/articles/stability-based-parameter-assessment.html).
+
+
+# Handling Large Datasets
+If your dataset is large, the runtime for the tools described above may be
+prohibitive. In these cases, we recommend subsampling your data using geometric
+sketching [3]. In R, the subsampling can be done via reticulate:
+
+`geosketch <- reticulate::import('geosketch')`
+
+assuming data.embed contains a dimensionality reduction of your data, you can
+then call:
+
+`sketch.indices <- geosketch$gs(data.embed, sketch.size, one_indexed = TRUE)`
+
+and use the resulting indices for your subsample. For PAC, subsampling to <1000 cells
+should help, and for ECS and data assessment functions, <5000 cells may be
+appropriate (and parallelization can further help reduce the runtime).
+
+
 # Installation
 ClustAssess can be installed from [CRAN](https://cran.r-project.org/index.html):
 
 `install.packages("ClustAssess")`
 
+or from github using remotes:
+
+`remotes::install_github("Core-Bioinformatics/ClustAssess")`
+
 The following packages are required for ClustAssess:
+
 * ggplot2
 * dplyr
 * fastcluster
@@ -107,14 +148,25 @@ The following packages are required for ClustAssess:
 * Rcpp
 * methods
 * stats
+* foreach
+* doParallel
+* irlba
+* progress
+* reshape2
+* stringr
+* uwot
 
-To run all examples and vignettes, the following packages are also needed:
+To use all stability-based assessment methods, and run all examples and 
+vignettes, the following packages are also needed:
+
 * knitr
 * rmarkdown
 * e1071
 * dbscan
 * dendextend
 * Seurat
+* readr
+* patchwork
 
 
 # References

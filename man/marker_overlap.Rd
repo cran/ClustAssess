@@ -2,7 +2,7 @@
 % Please edit documentation in R/marker-overlap.R
 \name{marker_overlap}
 \alias{marker_overlap}
-\title{Cell-wise marker gene overlap}
+\title{Cell-Wise Marker Gene Overlap}
 \usage{
 marker_overlap(
   markers1,
@@ -11,7 +11,8 @@ marker_overlap(
   clustering2,
   n = 25,
   overlap_type = "jsi",
-  rank_by = "-p_val"
+  rank_by = "-p_val",
+  use_sign = TRUE
 )
 }
 \arguments{
@@ -36,6 +37,11 @@ marker genes by. Note the sign here: to rank by lowest p-value, preface
 the column name with a minus sign; to rank by highest value, where higher
 value indicates more discriminative genes (for example power in the ROC
 test), no sign is needed.}
+
+\item{use_sign}{A logical: should the sign of markers match for overlap
+calculations? So a gene must be a positive or a negative marker in both
+clusters being compared. If TRUE, markers1 and markers2 must have a
+'avg_logFC' column, from which the sign of the DE will be extracted.}
 }
 \value{
 A vector of the marker gene overlap per cell.
@@ -46,7 +52,7 @@ marker genes.
 }
 \examples{
 suppressWarnings({
-set.seed(12345)
+set.seed(1234)
 library(Seurat)
 
 # cluster with Louvain algorithm
@@ -54,14 +60,20 @@ pbmc_small = FindClusters(pbmc_small, resolution=0.8, verbose=FALSE)
 
 # cluster with k-means
 pbmc.pca = Embeddings(pbmc_small, 'pca')
-pbmc_small@meta.data$kmeans_clusters = kmeans(pbmc.pca, centers=2)$cluster
+pbmc_small@meta.data$kmeans_clusters = kmeans(pbmc.pca, centers=3)$cluster
 
 # compare the markers
 Idents(pbmc_small) = pbmc_small@meta.data$seurat_clusters
-louvain.markers = FindAllMarkers(pbmc_small, logfc.threshold=1, verbose=FALSE)
+louvain.markers = FindAllMarkers(pbmc_small,
+                                 logfc.threshold=1,
+                                 test.use='t',
+                                 verbose=FALSE)
 
 Idents(pbmc_small) = pbmc_small@meta.data$kmeans_clusters
-kmeans.markers = FindAllMarkers(pbmc_small, logfc.threshold=1, verbose=FALSE)
+kmeans.markers = FindAllMarkers(pbmc_small,
+                                logfc.threshold=1,
+                                test.use='t',
+                                verbose=FALSE)
 
 pbmc_small@meta.data$jsi = marker_overlap(louvain.markers, kmeans.markers,
   pbmc_small@meta.data$seurat_clusters, pbmc_small@meta.data$kmeans_clusters)
