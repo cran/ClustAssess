@@ -2,23 +2,32 @@
 
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/ClustAssess)](https://github.com/r-hub/cranlogs.app)
 [![rstudio mirror downloads](https://cranlogs.r-pkg.org/badges/grand-total/ClustAssess)](https://github.com/r-hub/cranlogs.app)
+[![](https://img.shields.io/github/languages/code-size/Core-Bioinformatics/ClustAssess.svg)](https://github.com/Core-Bioinformatics/ClustAssess)
+[![CRAN status](https://www.r-pkg.org/badges/version/ClustAssess?color=orange)](https://CRAN.R-project.org/package=ClustAssess)
+[![](https://img.shields.io/badge/devel%20version-1.0.0-green.svg)](https://github.com/Core-Bioinformatics/ClustAssess)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/Core-Bioinformatics/ClustAssess/main?style=flat&color=white)
 
 This repo contains the ClustAssess R package, which provides a set of tools
 for evaluating clustering robustness.
+
+Please check the [ClustAssessPy](https://github.com/Core-Bioinformatics/ClustAssessPy) module for a Python
+implementation of the ClustAssess package.
 
 - [The Tools](#the-tools)
   * [Proportion of Ambiguously Clustered Pairs (PAC)](#proportion-of-ambiguously-clustered-pairs-pac)
   * [Element Centric Clustering Similarity (ECS)](#element-centric-clustering-similarity-ecs)
   * [Marker Gene Overlap](#marker-gene-overlap)
   * [Stability-Based Parameter Assessment](#stability-based-parameter-assessment)
+  * [Interactive Visualization of the Stability Assessment and Downstream Analysis](#interactive-visualization-of-the-stability-assessment-and-downstream-analysis)
 - [Handling Large Datasets](#handling-large-datasets)
 - [Installation](#installation)
+- [Citing ClustAssess](#citing-clustassess)
 - [References](#references)
 
 
 # The Tools
 
-<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/reference/figures/diagram.png width=80%/>
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/man/figures/ClustAssess_diagram_all.png width=80%/>
 
 ## Proportion of Ambiguously Clustered Pairs (PAC)
 To assess clustering robustness, the proportion of ambiguously clustered pairs
@@ -47,7 +56,7 @@ sketch [3] of your data of size <1000, and running PAC on that sketch.
 A local minimum in the PAC landscape, as visualized below using the
 `pac_landscape` function, can be interpreted as an optimal *k* for the dataset:
 
-<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/reference/pac_landscape-1.png width=80%/>
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/ClustAssess_files/figure-html/pac-2.png width=80%/>
 
 
 ## Element Centric Clustering Similarity (ECS)
@@ -103,11 +112,41 @@ choices that influence the final clustering, for example to evaluate feature
 sets, we use `get_feature_stability_object`, and plot the results with
 `plot_feature_stability_boxplot`:
 
-<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/stability-based-parameter-assessment_files/figure-html/stab_boxplot-1.png width=80%/>
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/docs/articles/stability-pipeline-description_files/figure-html/stab_boxplot-1.png width=80%/>
 
 where the higher element-centric consistency (ECC) indicates more stable
-clustering results across random seeds. For more details, please see [this 
-vignette](https://core-bioinformatics.github.io/ClustAssess/articles/stability-based-parameter-assessment.html).
+clustering results across random seeds. For more details, please see [this
+vignette](https://core-bioinformatics.github.io/ClustAssess/articles/stability-pipeline-description.html).
+
+## Interactive Visualization of the Stability Assessment and Downstream Analysis
+
+<img src=https://raw.githubusercontent.com/Core-Bioinformatics/ClustAssess/main/man/figures/ClustAssess_app_supp.png height=40%/>
+
+Another feature of the package consists in providing a Shiny application where
+the user can interactively visualize the stability assessment of the clustering
+and perform some downstream analysis steps on the dataset without prior R
+knwoledge. The application is divided into three major components:
+- Stability Assessments: the user is presented with the assessment of the
+clustering stability for each of the three steps of the PhenoGraph pipeline.
+This component is structured in three tabs, one for each step. The user is 
+prompted to select the stable configurations in order to proceed to the next
+section.
+- Comparison of configuration and downstream analysis: the user can visually
+assess the clustering results and the pattern on expression based on the
+variety of visualisations provided in this section, which contains UMAP plots
+(A - one or multiple gene expression, B - metadata distribution),
+violin and boxplots (G), gene expression pseudobulk heatmap and bubbleplots (E),
+metadata association heatmaps (C). The biological interpretation is enhanced by
+the possibility of identifying the marker genes for each cluster (F) and the
+enrichment analysis of the detected differentially expressed genes (H). The app
+allows custom annotation of the clusters and the already existing metadata (D).
+- Sandbox: this tab provides more flexibility for the user in temrs of the
+selected configuration. This approach is available, but not encouraged, as the
+results might not be stable and reproducible. This tab also contains elements
+such as panels for changing the colourscheme of the figures.
+
+The application can be generated using the output of the
+`automatic_stability_assessment` function and a normalised expression matrix.
 
 
 # Handling Large Datasets
@@ -138,35 +177,117 @@ or from github using remotes:
 
 The following packages are required for ClustAssess:
 
-* ggplot2
+* ComplexHeatmap
 * dplyr
+* DT
 * fastcluster
-* rlang
-* Matrix
-* igraph
-* magrittr
-* Rcpp
-* methods
-* stats
 * foreach
-* doParallel
-* irlba
+* glue
+* Gmedian
+* ggnewscale
+* ggplot2
+* ggrastr
+* ggrepel
+* ggtext
+* gprofiler2
+* igraph
+* jsonlite
+* leiden
+* Matrix (>= 1.5.0)
+* matrixStats
+* methods
 * progress
-* reshape2
 * stringr
+* paletteer
+* plotly
+* qualpalr
+* RANN
+* reshape2
+* rlang
+* Seurat
+* shiny
+* shinyjs
+* shinyLP
+* shinyWidgets
+* stats
 * uwot
+* vioplot
 
-To use all stability-based assessment methods, and run all examples and 
+To use all stability-based assessment methods, and run all examples and
 vignettes, the following packages are also needed:
 
-* knitr
-* rmarkdown
-* e1071
+* colourpicker
 * dbscan
+* DelayedMatrixStats
 * dendextend
-* Seurat
-* readr
+* devtools
+* doParallel
+* doRNG
+* e1071
+* knitr
+* leidenbase
+* monocle3
 * patchwork
+* ragg
+* reactlog
+* rhdf5
+* rmarkdown
+* RhpcBLASctl
+* scales
+* SeuratData
+* SeuratObject
+* SharedObject
+* styler
+* testthat
+
+To manually install the required dependencies, please use the following commands:
+```r
+install.packages(c("dplyr", "DT", "fastcluster", "foreach", "glue", "Gmedian", "ggnewscale", "ggplot2", "ggrastr", "ggrepel", "ggtext", "gprofiler2", "igraph", "jsonlite", "leiden", "Matrix", "matrixStats", "methods", "progress", "stringr", "paletteer", "plotly", "qualpalr", "RANN", "reshape2", "rlang", "Seurat", "shiny", "shinyjs", "shinyLP", "shinyWidgets", "stats", "uwot", "vioplot"), Ncpus = 1)
+install.packages("BiocManager")
+BiocManager::install(c("ComplexHeatmap"))
+```
+
+To manually install the suggested dependencies, please use the following commands:
+```r
+install.packages(c("colourpicker", "devtools", "doParallel", "doRNG", "knitr", "leidenbase", "patchwork", "ragg", "rmarkdown", "RhpcBLASctl", "scales", "SeuratObject", "styler", "testthat"), Ncpus = 1)
+
+install.packages("BiocManager")
+BiocManager::install(c("DelayedMatrixStats", "rhdf5"))
+
+devtools::install_github('cole-trapnell-lab/monocle3')
+devtools::install_github("Jiefei-Wang/SharedObject")
+```
+
+To manually install the packages that are exclusively used to build the vignettes, please use the following commands:
+```r
+devtools::install_github('satijalab/seurat-data')
+install.packages(c("harmony", "Signac"))
+BiocManager::install("Rsamtools")
+```
+
+
+*Note*: The package is under active development, and the release branches might contain additional features and bug fixes. 
+
+
+# Citing ClustAssess
+If you have used ClustAssess in your work, please cite [Shahsavari et al. 2022](https://doi.org/10.1101/2022.01.31.478592):
+
+```
+Shahsavari, A., Munteanu, A., & Mohorianu, I. (2022). ClustAssess: Tools for Assessing the Robustness of Single-Cell Clustering. bioRxiv. https://doi.org/10.1101/2022.01.31.478592
+```
+
+or in BibTex:
+
+```
+@ARTICLE{clustassess,
+  title     = "ClustAssess: Tools for Assessing the Robustness of Single-Cell Clustering",
+  author    = "Shahsavari, Arash and Munteanu, Andi and Mohorianu, Irina",
+  journal   = "bioRxiv",
+  year      =  2022,
+  url       = "https://doi.org/10.1101/2022.01.31.478592",
+  language  = "en"
+}
+```
 
 
 # References

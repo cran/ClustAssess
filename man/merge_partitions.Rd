@@ -4,26 +4,50 @@
 \alias{merge_partitions}
 \title{Merge Partitions}
 \usage{
-merge_partitions(partition_list, ecs_thresh = 1, ncores = 1, order = TRUE)
+merge_partitions(
+  partition_list,
+  ecs_thresh = 1,
+  order_logic = c("freq", "avg_agreement", "none"),
+  return_ecs_matrix = FALSE,
+  check_ties = TRUE
+)
 }
 \arguments{
 \item{partition_list}{A list of flat disjoint membership vectors.}
 
 \item{ecs_thresh}{A numeric: the ecs threshold.}
 
-\item{ncores}{The number of parallel R instances that will run the code.
-If the value is set to 1, the code will be run sequentially.}
+\item{order_logic}{Variable indicating the method of ordering the partitions.
+It can take these three values:
+\itemize{
+\item "freq": order the partitions based on their frequencies. The partition with
+the highest frequency will be the first on the list (default).
+\item "avg_agreement": order the partitions based on their average agreement index.
+The average agreement index of a partition is calculated as the mean of
+the ECS scores between that partition and the other partitions from the list.
+The partition with the highest agreement will be  the first on the list.
+\item "none": do not perform any ordering (not recommended). If selected, the
+average agreement scores will not be calculated.
+}}
 
-\item{order}{A logical: if TRUE, order the partitions based on their frequencies.}
+\item{return_ecs_matrix}{A logical: if TRUE, the function will add the
+ECS matrix to the return list. Defaults to FALSE.}
+
+\item{check_ties}{A logical value that indicates whether to check for ties
+in the highest frequency partitions or not. If TRUE, the function will put
+at the first position the partition that has the highest similarity
+with the other partitions. Defaults to \code{FALSE}.}
 }
 \value{
-a list of the merged partitions
+a list of the merged partitions, together with their associated
+ECC score. If \code{return_ecs_matrix} is set to TRUE, the function will also
+return the ECS matrix.
 }
 \description{
 Merge flat disjoint clusterings whose pairwise ECS score is
 above a given threshold. The merging is done using a complete linkage approach.
 }
 \examples{
-initial_list = list(c(1,1,2), c(2,2,2), c('B','B','A'))
-merge_partitions(initial_list, 0.99)
+initial_list <- list(c(1, 1, 2), c(2, 2, 2), c("B", "B", "A"))
+merge_partitions(initial_list, 1)
 }

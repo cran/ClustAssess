@@ -12,8 +12,7 @@ element_agreement(
   rescale_path_type = "max",
   ppr_implementation = "prpack",
   dist_rescaled = FALSE,
-  row_normalize = TRUE,
-  ncores = 1
+  row_normalize = TRUE
 )
 }
 \arguments{
@@ -57,9 +56,6 @@ rescaled to be in-between 0 and 1.}
 \item{row_normalize}{Whether to normalize all rows in clustering_result
 so they sum to one before calculating ECS. It is recommended to set this to
 TRUE, which will lead to slightly different ECS values compared to clusim.}
-
-\item{ncores}{the number of parallel R instances that will run the code.
-If the value is set to 1, the code will be run sequentially.}
 }
 \value{
 A vector containing the element-wise average agreement.
@@ -69,11 +65,9 @@ Inspect how consistently of a set of clusterings agree with
 a reference clustering by calculating their element-wise average agreement.
 }
 \examples{
-reference.clustering = iris$Species
-clustering.list = list()
-for (i in 1:20){
-  clustering.list[[i]] = kmeans(iris[,1:4], 3)$cluster
-}
+# perform k-means clustering across 20 random seeds
+reference.clustering <- iris$Species
+clustering.list <- lapply(1:20, function(x) kmeans(iris[, 1:4], centers = 3)$cluster)
 element_agreement(reference.clustering, clustering.list)
 }
 \references{
