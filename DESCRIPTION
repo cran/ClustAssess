@@ -1,7 +1,7 @@
 Package: ClustAssess
 Type: Package
 Title: Tools for Assessing Clustering
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(person("Andi", "Munteanu",
                   email="am3019@cam.ac.uk", role=c("aut", "cre")), person("Arash", "Shahsavari", email="arash8579@hotmail.com",
                   role = c("aut")), person("Rafael", "Kollyfas", role=c("ctb"), email="rk720@cam.ac.uk"), person("Miguel", "Larraz Lopez de Novales", role=c("aut"), email ="ml2088@cam.ac.uk"), person("Liviu", "Ciortuz", role=c("ctb"), email="liviu_ciortuz@yahoo.co.uk"), person("Irina", "Mohorianu",
@@ -30,16 +30,15 @@ Imports: dplyr, DT, fastcluster, foreach, glue, Gmedian, ggnewscale,
 RoxygenNote: 7.3.2
 LinkingTo: Rcpp, RcppEigen
 Suggests: BiocManager, colourpicker, ComplexHeatmap, data.table,
-        DelayedMatrixStats, devtools, doParallel, knitr, leidenbase,
-        monocle3, patchwork, ragg, reticulate, rhdf5, RhpcBLASctl,
-        rmarkdown, scales, SeuratObject, SharedObject, styler, testthat
-        (>= 3.0.0)
+        DelayedMatrixStats, devtools, doParallel, leidenbase, monocle3,
+        patchwork, ragg, reticulate, rhdf5, RhpcBLASctl, rmarkdown,
+        scales, SeuratObject, SharedObject, styler, testthat (>= 3.0.0)
 URL: https://github.com/Core-Bioinformatics/ClustAssess,
         https://core-bioinformatics.github.io/ClustAssess/
 BugReports: https://github.com/Core-Bioinformatics/ClustAssess/issues
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2025-01-31 20:53:28 UTC; am3019
+Packaged: 2025-05-27 18:35:35 UTC; andi
 Author: Andi Munteanu [aut, cre],
   Arash Shahsavari [aut],
   Rafael Kollyfas [ctb],
@@ -48,4 +47,4 @@ Author: Andi Munteanu [aut, cre],
   Irina Mohorianu [aut]
 Maintainer: Andi Munteanu <am3019@cam.ac.uk>
 Repository: CRAN
-Date/Publication: 2025-01-31 22:40:06 UTC
+Date/Publication: 2025-05-27 23:00:30 UTC
